@@ -435,7 +435,7 @@ function step(delta) {
 window.addEventListener("wheel", (e) => {
   if (expanded && (e.deltaY >= 0 || window.scrollY > 5)) return;
   e.preventDefault();
-  step(e.deltaY * 0.00108);
+  step(e.deltaY * 0.0009);
 }, { passive: false });
 
 window.addEventListener("scroll", () => {
@@ -450,7 +450,7 @@ window.addEventListener("touchmove", (e) => {
   const y = e.touches[0].clientY;
   const d = lastY - y;
   lastY = y;
-  step(d * 0.006);
+  step(d * 0.005);
 }, { passive: false });
 
 window.addEventListener("resize", render);
