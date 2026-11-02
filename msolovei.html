@@ -206,6 +206,10 @@ body {
   .track, .ticker-track { animation: none !important; }
 }
 
+
+/* === Футер: клон бегущей строки === */
+.ticker--footer { border-bottom: none; border-top: 1px solid var(--line); }
+.ticker--footer .ticker-track { animation-direction: reverse; }
 </style>
 </head>
 <body data-base="">
@@ -248,7 +252,7 @@ body {
           </p>
           <p class="links">
             <a class="btn" href="https://bootcamp.skillbox.ru/design_miniapp"><span>Кейс Skillbox</span></a>
-            <a class="btn" href="https://olegdvtv.notion.site/Product-Designer-UXUI-2c3dc984ea3d8019904fcf2c60dfc7bd?pvs=73"><span>Другие проекты</span></a>
+            <a class="btn" href="https://olegdvtv.notion.site/Product-Designer-UXUI-2c3dc984ea3d8019904fcf2c60dfc7bd?pvs=73"><span>Портфолио</span></a>
           </p>
 
           <h3>01 — Что предлагаю</h3>
@@ -262,37 +266,36 @@ body {
             <a class="btn" href="mailto:olegdevyatow@gmail.com"><span>Почта</span></a>
             <a class="btn" href="https://t.me/olegdevyatow"><span>Телеграм</span></a>
           </p>
-
-          <div class="contacts">
-            <span>Олег Девятов · Bangkok · Remote (GMT+7)</span>
-            <a href="mailto:olegdevyatow@gmail.com">olegdevyatow@gmail.com</a>
-            <a href="https://t.me/olegdevyatow">t.me/olegdevyatow</a>
-          </div>
         </div>
       </div>
 
     </div>
   </section>
+
+  <div class="ticker ticker--footer" aria-hidden="true">
+    <div class="ticker-track"></div>
+  </div>
 </div>
 
 <script>
 /* ================= БЕГУЩАЯ СТРОКА: тезисы ================= */
 const THESES = [
-  "9+ лет в дизайне и AI-продакшене",
-  "1000+ учеников · 5 лет в EdTech",
+  "Новый курс AI + Web: сайт из ваших AI-работ",
+  "Все инструменты для создания — бесплатные и без VPN",
+  "10 000+ студентов прошли мои программы",
+  "10+ образовательных программ в EdTech",
   "Автор программ Skillbox и CONTENTED",
-  "AI-конвейеры: Midjourney, ComfyUI, Runway, Kling, n8n",
-  "ShugarAi: возвраты +27%, длина сессии +19%",
-  "50 000+ аудитория Telegram",
-  "Программа, методология, запись уроков, вебинары — беру на себя",
+  "Работать со мной просто и приятно",
+  "Программа, уроки, вебинары и обратная связь — беру на себя",
   "Запустим вместе AI + Web",
 ];
 const groupHTML = THESES
   .map((t, i) => `<span class="${i === THESES.length - 1 ? "accent" : ""}">${t}</span>`)
   .join("<i></i>");
-const tickerEl = document.getElementById("ticker");
-tickerEl.innerHTML = `<div class="ticker-group">${groupHTML}</div><div class="ticker-group">${groupHTML}</div>`;
-tickerEl.style.animationDuration = Math.max(30, tickerEl.firstElementChild.offsetWidth / 45) + "s";
+for (const tickerEl of document.querySelectorAll(".ticker-track")) {
+  tickerEl.innerHTML = `<div class="ticker-group">${groupHTML}</div><div class="ticker-group">${groupHTML}</div>`;
+  tickerEl.style.animationDuration = Math.max(30, tickerEl.firstElementChild.offsetWidth / 45) + "s";
+}
 
 /* ================= ФОН: галереи ================= */
 const BASE = document.body.dataset.base || "";
