@@ -88,8 +88,9 @@ body {
 .track { display: flex; gap: 16px; width: max-content; will-change: transform; }
 .card {
   flex: 0 0 auto;
-  width: var(--card-w, clamp(220px, 24vw, 340px));
-  aspect-ratio: 16 / 9;
+  height: var(--card-h, 180px);
+  width: auto;
+  aspect-ratio: var(--ar, 16 / 9);
   border-radius: 14px; overflow: hidden;
   border: 1px solid var(--line);
   box-shadow: 0 8px 30px rgba(0,0,0,.45);
@@ -297,8 +298,15 @@ for (const tickerEl of document.querySelectorAll(".ticker-track")) {
   tickerEl.style.animationDuration = Math.max(30, tickerEl.firstElementChild.offsetWidth / 45) + "s";
 }
 
-/* ================= ФОН: галереи ================= */
+/* ================= ФОН: галерея по механике gal/glass-rows.jsx =================
+   Правило: высота строки ЕДИНАЯ (cardH), ширина карточки = cardH * iw / ih —
+   реальный аспект файла, ничего не обрезается.
+   cardW = min(byWidth, byHeight) из cardWidthFor(), cardH = cardW * 9/16.
+   Движок: target растёт линейно со speed = 2/duration*SLOW_FACTOR (доля
+   period/сек, все строки в одну сторону, фаза i*0.35), offset догоняет
+   target сглаживанием SCROLL_EASE — как в оригинале. */
 const BASE = document.body.dataset.base || "";
+const DIMS = {"g09.mp4":[1500,830],"g10.mp4":[1280,998],"g15.mp4":[1600,900],"g20.mp4":[480,380],"n08.mp4":[406,720],"n09.mp4":[406,720],"n14.mp4":[720,398],"n19.mp4":[400,396],"p03.jpg":[720,415],"p09.jpg":[720,253],"p15.jpg":[720,345],"g05.mp4":[900,702],"g06.mp4":[864,800],"g11.mp4":[1024,80],"g16.mp4":[480,516],"n04.mp4":[720,394],"n05.mp4":[720,382],"n10.mp4":[720,406],"n15.mp4":[720,406],"p02.jpg":[720,253],"p08.jpg":[720,415],"p14.jpg":[720,415],"p20.jpg":[720,415],"g01.mp4":[1526,618],"g02.mp4":[1600,816],"g07.mp4":[576,592],"g12.mp4":[1024,80],"g25.mp4":[480,270],"n01.mp4":[406,720],"n06.mp4":[406,720],"n11.mp4":[600,378],"p01.jpg":[720,345],"p07.jpg":[720,253],"p13.jpg":[720,253],"p19.jpg":[720,253],"g13.mp4":[400,712],"g14.mp4":[400,712],"g19.mp4":[480,476],"g24.mp4":[480,314],"n12.mp4":[720,720],"n13.mp4":[720,388],"n18.mp4":[340,720],"p04.jpg":[720,345],"p10.jpg":[720,345],"p16.jpg":[720,253],"g04.mp4":[1306,1120],"g17.mp4":[1600,900],"g18.mp4":[1526,618],"g23.mp4":[1600,900],"n16.mp4":[720,406],"n17.mp4":[406,720],"p05.jpg":[720,415],"p11.jpg":[720,415],"p17.jpg":[720,253],"g03.mp4":[1500,830],"g08.mp4":[1280,998],"g21.mp4":[1600,900],"g22.mp4":[480,380],"n02.mp4":[406,720],"n07.mp4":[406,720],"n20.mp4":[720,398],"p06.jpg":[720,415],"p12.jpg":[720,415],"p18.jpg":[720,253]};
 const DEFAULT_ROWS = [
   ["p04.jpg","g12.mp4","p07.jpg","g06.mp4","p14.jpg","g11.mp4","p18.jpg","g04.mp4","p16.jpg","g08.mp4","p19.jpg","n17.mp4"],
   ["p05.jpg","n01.mp4","p06.jpg","g19.mp4","p09.jpg","g22.mp4","p15.jpg","g10.mp4","p03.jpg","n09.mp4","p01.jpg","n02.mp4"],
@@ -306,13 +314,12 @@ const DEFAULT_ROWS = [
   ["p10.jpg","n05.mp4","p12.jpg","n14.mp4","n12.mp4","g18.mp4","n19.mp4","g25.mp4","n07.mp4","n04.mp4","g16.mp4","g01.mp4"],
 ];
 const ROWS = window.ROWS || DEFAULT_ROWS;
-const SPEED = [26, -20, 30, -24];
+const DURATIONS = [75, 105, 90, 120]; // как в WarpPage: 75/105/90 (+1)
+const SLOW_FACTOR = 0.12;   // gal/glass-rows.jsx
+const SCROLL_EASE = 9;      // gal/glass-rows.jsx
 const bgEl = document.getElementById("bg");
 const tracks = [];
 
-/* Правило галереи (gal/glass-rows.jsx: cardWidthFor): ширина карточки =
-   min(byWidth, byHeight), где byHeight гарантирует, что ВСЕ строки с единой
-   высотой (16/9) влезают в высоту экрана. */
 function fitCards() {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
@@ -320,7 +327,8 @@ function fitCards() {
   const gap = parseFloat(getComputedStyle(bgEl).rowGap) || 0;
   const byWidth = vw < 640 ? Math.round(vw * 0.8) : Math.min(900, Math.max(440, Math.round(vw * 0.36)));
   const byHeight = Math.floor((vh - (n - 1) * gap) / n * (16 / 9));
-  document.documentElement.style.setProperty("--card-w", Math.max(100, Math.min(byWidth, byHeight)) + "px");
+  const cardW = Math.max(100, Math.min(byWidth, byHeight));
+  document.documentElement.style.setProperty("--card-h", (cardW * 9 / 16) + "px");
 }
 fitCards();
 window.addEventListener("resize", fitCards);
@@ -328,6 +336,8 @@ window.addEventListener("resize", fitCards);
 function card(src) {
   const d = document.createElement("div");
   d.className = "card";
+  const [iw, ih] = DIMS[src] || [16, 9];
+  d.style.setProperty("--ar", iw + " / " + ih);
   const isVideo = src.endsWith(".mp4");
   const el = document.createElement(isVideo ? "video" : "img");
   el.src = src.startsWith("data:") || src.startsWith("http") ? src : BASE + "media/" + src;
@@ -350,21 +360,31 @@ ROWS.forEach((srcs, i) => {
   [...srcs, ...srcs].forEach(s => track.appendChild(card(s)));
   row.appendChild(track);
   bgEl.appendChild(row);
-  tracks.push({ el: track, offset: -i * 180, speed: SPEED[i] ?? 20 });
+  const period = 1; // в долях: offset хранится как доля period строки
+  const speed = 2 / (DURATIONS[i] ?? 90) * SLOW_FACTOR;
+  tracks.push({ el: track, offset: i * 0.35, target: i * 0.35, speed, period });
 });
+
+/* пересчёт period после раскладки (ширины карточек меняются с --card-h) */
+function measureTracks() {
+  for (const t of tracks) {
+    const w = t.el.scrollWidth / 2;
+    t.periodPx = w > 0 ? w : 1;
+  }
+}
+measureTracks();
+window.addEventListener("resize", measureTracks);
+if (document.fonts?.ready) document.fonts.ready.then(measureTracks);
 
 let gLast = performance.now();
 function galleryTick(now) {
   const dt = Math.min(0.05, (now - gLast) / 1000);
   gLast = now;
   for (const t of tracks) {
-    t.offset += t.speed * dt;
-    const half = t.el.scrollWidth / 2;
-    if (half > 0) {
-      if (t.offset <= -half) t.offset += half;
-      if (t.offset > 0) t.offset -= half;
-    }
-    t.el.style.transform = `translate3d(${t.offset}px,0,0)`;
+    t.target -= t.speed * dt;                                  // линейный рост цели
+    t.offset += (t.target - t.offset) * (1 - Math.exp(-SCROLL_EASE * dt)); // сглаживание
+    const frac = ((t.offset % 1) + 1) % 1;                     // цикл в долях period
+    t.el.style.transform = `translate3d(${-frac * t.periodPx}px,0,0)`;
   }
   requestAnimationFrame(galleryTick);
 }
