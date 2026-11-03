@@ -440,6 +440,7 @@ function render() {
 }
 
 function step(delta) {
+  if (document.getElementById("preloader")) return; // пока прелоадер на экране — скролл заблокирован
   if (expanded) {
     if (delta >= 0 || window.scrollY > 5) return;
     expanded = false;
@@ -719,6 +720,16 @@ document.querySelectorAll(".btn").forEach((el) => specular(el, { radius: 14 }));
   const pl = document.getElementById("preloader");
   if (!pl) return;
   const video = pl.querySelector("video");
+  // скролл заблокирован, пока прелоадер на экране
+  document.documentElement.style.overflow = "hidden";
+  const block = e => e.preventDefault();
+  addEventListener("wheel", block, { passive: false });
+  addEventListener("touchmove", block, { passive: false });
+  const unlock = () => {
+    document.documentElement.style.overflow = "";
+    removeEventListener("wheel", block);
+    removeEventListener("touchmove", block);
+  };
   const ready = () => {
     const imgs = [...document.images];
     const vids = [...document.querySelectorAll("video")].filter(v => v !== video);
@@ -753,7 +764,7 @@ document.querySelectorAll(".btn").forEach((el) => specular(el, { radius: 14 }));
       const p = Math.min(1, (now - t0) / dur);
       draw(easeInOut(p));
       if (p < 1) requestAnimationFrame(tick);
-      else pl.remove();
+      else { pl.remove(); unlock(); }
     };
     requestAnimationFrame(tick);
   };
