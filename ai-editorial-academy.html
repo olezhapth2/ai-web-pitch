@@ -212,25 +212,23 @@ body {
 .ticker--footer { border-bottom: none; border-top: 1px solid var(--line); }
 .ticker--footer .ticker-track { animation-direction: reverse; }
 
-/* === Прелоадер: белый экран + gif в центре === */
+/* === Прелоадер: серый фон с гифки, радиальное открытие от краёв к центру === */
 .preloader {
   position: fixed; inset: 0; z-index: 300;
-  background: #fff;
+  background: #f5f5f3;
   display: flex; align-items: center; justify-content: center;
-  clip-path: inset(0 0 0 0);
+  --pl-r: 150%;
+  -webkit-mask-image: radial-gradient(circle, #000 calc(var(--pl-r) - 22%), transparent var(--pl-r));
+          mask-image: radial-gradient(circle, #000 calc(var(--pl-r) - 22%), transparent var(--pl-r));
 }
 .preloader video {
-  width: min(300px, 76vw);
+  width: min(240px, 68vw);
   aspect-ratio: 3 / 4;
   object-fit: cover;
   border-radius: 16px;
-  transition: opacity .3s ease;
+  transition: opacity .6s cubic-bezier(.4, 0, .2, 1);
 }
 .preloader.done video { opacity: 0; }
-.preloader.done {
-  clip-path: inset(50% 50% 50% 50%);
-  transition: clip-path .9s cubic-bezier(.7, 0, .2, 1) .1s;
-}
 </style>
 </head>
 <body data-base="">
@@ -716,29 +714,46 @@ function specular(el, opts = {}) {
 document.querySelectorAll(".btn").forEach((el) => specular(el, { radius: 14 }));
 
 
-/* ========= Прелоадер: белый экран исчезает от краев к центру ========= */
+/* ========= Прелоадер: радиальное открытие от краёв к центру ========= */
 (() => {
   const pl = document.getElementById("preloader");
   if (!pl) return;
   const ready = () => {
     const imgs = [...document.images];
-    const vids = [...document.querySelectorAll("video")];
+    const vids = [...document.querySelectorAll("video")].filter(v => v !== pl.querySelector("video"));
     return imgs.every(i => i.complete && i.naturalWidth > 0)
         && vids.every(v => v.readyState >= 2);
   };
+  const easeInOut = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   const finish = () => {
     if (pl.classList.contains("done")) return;
     pl.classList.add("done");
-    setTimeout(() => pl.remove(), 1300);
+    const dur = 1000, t0 = performance.now();
+    const tick = now => {
+      const p = Math.min(1, (now - t0) / dur);
+      pl.style.setProperty("--pl-r", (150 * (1 - easeInOut(p))) + "%");
+      if (p < 1) requestAnimationFrame(tick);
+      else pl.remove();
+    };
+    requestAnimationFrame(tick);
   };
   const t0 = performance.now();
+  window.__plLog = [];
+  const pending = () => {
+    const p = [];
+    for (const i of document.images) if (!(i.complete && i.naturalWidth > 0)) p.push("img:" + (i.currentSrc || i.src).slice(-30));
+    for (const v of document.querySelectorAll("video")) if (v !== pl.querySelector("video") && v.readyState < 2) p.push("vid rs" + v.readyState + ":" + (v.currentSrc || v.src).slice(-30));
+    return p;
+  };
   const poll = () => {
-    if (ready() || performance.now() - t0 > 12000) finish();
-    else setTimeout(poll, 120);
+    const pend = pending();
+    if (window.__plLog.length < 60) window.__plLog.push([Math.round(performance.now() - t0), pend.length, pend.slice(0, 3)]);
+    if (!pend.length || performance.now() - t0 > 14000) finish();
+    else setTimeout(poll, 400);
   };
   if (document.readyState === "complete") poll();
   else window.addEventListener("load", poll, { once: true });
-  setTimeout(poll, 12000); // страховка: не держим экран дольше 12с
+  setTimeout(poll, 14000);
 })();
 
 </script>
