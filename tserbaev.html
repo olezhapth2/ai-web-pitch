@@ -226,9 +226,7 @@ body {
   aspect-ratio: 3 / 4;
   object-fit: cover;
   border-radius: 16px;
-  transition: opacity 1.2s cubic-bezier(.4, 0, .2, 1);
 }
-.preloader.done video { opacity: 0; }
 </style>
 </head>
 <body data-base="">
@@ -745,7 +743,7 @@ document.querySelectorAll(".btn").forEach((el) => specular(el, { radius: 14 }));
     pl.prepend(cv);
     const ctx = cv.getContext("2d");
     const W = cv.width = innerWidth, H = cv.height = innerHeight;
-    const cell = Math.ceil(W / 44);
+    const cell = Math.max(6, Math.round(W / 110)); // мелкие ячейки
     const cols = Math.ceil(W / cell), rows = Math.ceil(H / cell);
     const draw = p => {
       ctx.clearRect(0, 0, W, H);
@@ -763,6 +761,7 @@ document.querySelectorAll(".btn").forEach((el) => specular(el, { radius: 14 }));
     const tick = now => {
       const p = Math.min(1, (now - t0) / dur);
       draw(easeInOut(p));
+      video.style.opacity = 1 - easeInOut(p); // гифка исчезает вместе с фоном, одним прогрессом
       if (p < 1) requestAnimationFrame(tick);
       else { pl.remove(); unlock(); }
     };
