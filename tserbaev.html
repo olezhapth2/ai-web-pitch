@@ -136,9 +136,11 @@ body {
   font-size: .8rem; font-weight: 600;
   letter-spacing: .12em; text-transform: uppercase;
   color: var(--text-dim);
-  margin: 3rem 0 1rem;
+  margin: 2.2rem 0 .9rem;
 }
 .content .lead { color: var(--text-dim); font-size: clamp(1.05rem, 1.8vw, 1.2rem); line-height: 1.6; }
+.content .offer { color: var(--text); font-weight: 600; letter-spacing: -.01em; margin-bottom: .35rem; }
+.content .pitch { margin-top: 0; }
 .content p { font-size: 1rem; line-height: 1.65; color: var(--text-dim); margin-bottom: 1.1rem; }
 .content .hl { color: var(--text); font-weight: 600; }
 .content p a:not(.btn) { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
@@ -262,7 +264,8 @@ body {
 
           <p>Я Олег Девятов, дизайнер с 9+ годами опыта и преподаватель с 1000+ учеников.</p>
 
-          <p class="lead"><span class="hl">Предлагаю запустить вместе направление AI + Web:</span><br />Вы учите AI-фотографии и AI-видео, я показываю, как превратить работы в авторский сайт — цифровую выставку и портфолио.</p>
+          <p class="lead offer">Предлагаю запустить вместе направление AI + Web:</p>
+          <p class="lead pitch">Вы учите AI-фотографии и AI-видео, я показываю, как превратить работы в авторский сайт — цифровую выставку и портфолио.</p>
 
           <p>
             Прошёл путь от графического дизайна и сети своих образовательных Telegram-каналов с аудиторией
@@ -711,6 +714,8 @@ function specular(el, opts = {}) {
 }
 
 document.querySelectorAll(".btn").forEach((el) => specular(el, { radius: 14 }));
+const mediaCard = document.getElementById("media");
+if (mediaCard) specular(mediaCard, { radius: 16 });
 
 
 /* ========= Прелоадер: dither-dissolve, белый, от краёв к центру ========= */
