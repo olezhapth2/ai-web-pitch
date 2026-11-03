@@ -769,13 +769,15 @@ document.querySelectorAll(".btn").forEach((el) => specular(el, { radius: 14 }));
     requestAnimationFrame(tick);
   };
   const t0 = performance.now();
+  const MIN = 4000; // минимальное время прелоадера — 4с, потом анимация
   const poll = () => {
-    if (ready() || performance.now() - t0 > 14000) finish();
-    else setTimeout(poll, 400);
+    const elapsed = performance.now() - t0;
+    if (elapsed > 14000) return finish();
+    if (ready() && elapsed >= MIN) return finish();
+    setTimeout(poll, Math.max(100, MIN - elapsed));
   };
   if (document.readyState === "complete") poll();
   else window.addEventListener("load", poll, { once: true });
-  setTimeout(poll, 14000);
 })();
 
 </script>
