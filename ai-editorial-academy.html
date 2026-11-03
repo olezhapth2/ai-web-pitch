@@ -124,7 +124,7 @@ body {
 .content {
   width: 100%; max-width: 47rem;
   padding: 6rem 2rem;
-  opacity: 0; transition: opacity .7s ease;
+  opacity: 0; transition: opacity 1.4s ease;
 }
 .content h2 {
   font-size: clamp(1.6rem, 3.2vw, 2.4rem);
@@ -226,7 +226,7 @@ body {
   aspect-ratio: 3 / 4;
   object-fit: cover;
   border-radius: 16px;
-  transition: opacity .6s cubic-bezier(.4, 0, .2, 1);
+  transition: opacity 1.2s cubic-bezier(.4, 0, .2, 1);
 }
 .preloader.done video { opacity: 0; }
 </style>
@@ -337,7 +337,7 @@ const DEFAULT_ROWS = [
 const ROWS = window.ROWS || DEFAULT_ROWS;
 const DURATIONS = [75, 105, 90, 120]; // как в WarpPage: 75/105/90 (+1)
 const SLOW_FACTOR = 0.1728; // 0.12 из gal/glass-rows.jsx, +20% +20%
-const SCROLL_EASE = 9;      // gal/glass-rows.jsx
+const SCROLL_EASE = 4.5;    // 9 из gal/glass-rows.jsx /2 — вдвое плавнее
 const bgEl = document.getElementById("bg");
 const tracks = [];
 
@@ -728,7 +728,7 @@ document.querySelectorAll(".btn").forEach((el) => specular(el, { radius: 14 }));
   const finish = () => {
     if (pl.classList.contains("done")) return;
     pl.classList.add("done");
-    const dur = 1000, t0 = performance.now();
+    const dur = 2000, t0 = performance.now();
     const tick = now => {
       const p = Math.min(1, (now - t0) / dur);
       pl.style.setProperty("--pl-r", (150 * (1 - easeInOut(p))) + "%");
