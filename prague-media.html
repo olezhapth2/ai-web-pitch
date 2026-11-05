@@ -166,13 +166,13 @@ body {
   font-size: .8rem; font-weight: 600;
   letter-spacing: .12em; text-transform: uppercase;
   color: var(--text-dim);
-  margin: 1.9rem 0 .8rem;
+  margin: 1.3rem 0 .6rem;
   display: flex; align-items: center; gap: .8rem;
 }
 .content h3::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-.content .lead { color: var(--text-dim); font-size: clamp(1.05rem, 1.8vw, 1.2rem); line-height: 1.6; }
+.content .lead { color: var(--text-dim); font-size: clamp(1.05rem, 1.8vw, 1.2rem); line-height: 1.45; }
 .content .acc { color: var(--acc); }
-.content .offer { margin: .2rem 0 .9rem; }
+.content .offer { margin: .1rem 0 .5rem; }
 .content .offer-kicker {
   font-size: .8rem; font-weight: 600;
   letter-spacing: .14em; text-transform: uppercase;
@@ -182,7 +182,7 @@ body {
 .content .offer-title {
   font-size: clamp(1.7rem, 3.4vw, 2.5rem);
   font-weight: 700; letter-spacing: -.03em; line-height: 1.15;
-  color: var(--text); margin-top: .45rem;
+  color: var(--text); margin-top: 0;
 }
 .content .offer-title .acc {
   color: var(--acc);
@@ -190,6 +190,14 @@ body {
 }
 .content .offer-title .paren { color: var(--text-dim); font-weight: 400; }
 .content .pitch { margin-top: 0; }
+.content .feats { display: flex; flex-wrap: wrap; gap: .45rem; margin: .3rem 0 0; }
+.content .feats span {
+  display: inline-flex; align-items: center; gap: .4em;
+  font-size: .8rem; color: var(--text-dim);
+  border: 1px solid var(--line); border-radius: 999px;
+  padding: 6px 13px;
+}
+.content .feats i { font-style: normal; color: var(--acc); font-weight: 700; }
 .content .pitch::before {
   content: "→ ";
   font-family: "Medeo Mono", ui-monospace, monospace;
@@ -200,14 +208,14 @@ body {
   text-decoration-color: var(--acc-underline); text-underline-offset: 3px;
 }
 .content .pitch a:hover, .content a.hl:hover { color: var(--text); text-decoration-color: var(--text); }
-.content p { font-size: 1rem; line-height: 1.65; color: var(--text-dim); margin-bottom: .95rem; }
+.content p { font-size: 1rem; line-height: 1.5; color: var(--text-dim); margin-bottom: .7rem; }
 .content .hl { color: var(--text); font-weight: 600; }
 .content p a:not(.btn) { color: var(--acc); text-decoration: underline; text-decoration-color: rgba(116,167,255,.5); text-underline-offset: 3px; }
 .content p a:not(.btn):hover { color: var(--text); text-decoration-color: var(--text); }
 
 /* === Кнопки (SpecularButton, vanilla-порт) === */
 .content .links { display: flex; flex-wrap: wrap; gap: .9rem; }
-.content .links + p, .content p + .links { margin-top: 1.4rem; }
+.content .links + p, .content p + .links { margin-top: .9rem; }
 .btn {
   position: relative; isolation: isolate;
   display: inline-flex; align-items: center; justify-content: center;
@@ -228,7 +236,7 @@ body {
   width: calc(100% + 48px); height: calc(100% + 48px);
   pointer-events: none; z-index: 1; display: block;
 }
-.content .footer-links { margin-top: 3rem; }
+.content .footer-links { margin-top: 1.6rem; }
 
 .content .contacts {
   margin-top: 2.2rem;
@@ -277,8 +285,15 @@ body {
 .preloader {
   position: fixed; inset: 0; z-index: 300;
   background: #f5f5f3;
-  display: flex; align-items: center; justify-content: center;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: clamp(18px, 3.5vh, 34px);
   overflow: hidden;
+}
+.pl-caption {
+  position: relative; z-index: 1;
+  font-weight: 700; letter-spacing: -.02em; line-height: 1;
+  font-size: min(100px, 11vw);
+  color: #2f6fe0;
 }
 .preloader canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .preloader video {
@@ -308,6 +323,7 @@ body, .ticker, .wave a { transition: background-color .45s ease, color .45s ease
 <body data-base="">
 <div class="preloader" id="preloader" aria-hidden="true">
   <video src="media/preloader.mp4" autoplay muted loop playsinline></video>
+  <div class="pl-caption" id="plCaption">AI + WEB.</div>
 </div>
 <div class="root">
 
@@ -334,23 +350,15 @@ body, .ticker, .wave a { transition: background-color .45s ease, color .45s ease
         </div>
 
         <div class="content" id="content">
-          <p class="lead" style="margin-bottom:1.2rem"><span class="acc">✳</span> Привет Пражская медиашкола !!</p>
+          <p class="lead" style="margin-bottom:1rem"><span class="acc">✳</span> Привет Пражская медиашкола !!</p>
 
-          <p>Я Олег Девятов, дизайнер с 9+ годами опыта и преподаватель с 1000+ учеников.</p>
+          <p>Я Олег Девятов, Старший UI дизайнер, ex ментор, автор, спикер, <a href="https://skillbox.ru">Skillbox</a> &amp; <a href="https://contented.ru">CONTENTED</a>, создатель сети <a href="https://t.me/istudy">1</a> <a href="https://t.me/a_study">2</a> <a href="https://t.me/c4study">3</a> <a href="https://t.me/pprostudy">4</a> Telegram-каналов. Предлагаю вместе запустить:</p>
 
           <div class="offer">
-            <div class="offer-kicker"><span class="paren">(</span>Предлагаю запустить вместе<span class="paren">)</span></div>
-            <p class="offer-title">направление <span class="acc">AI + Web</span><span class="paren">:</span></p>
+            <p class="offer-title">НАПРАВЛЕНИЕ <span class="acc">AI + WEB</span>.</p>
           </div>
           <p class="lead pitch">Вы учите создавать и показывать AI-фильмы, я показываю, как представить готовый фильм на персональном сайте режиссёра — на двух языках.</p>
 
-          <p>
-            Прошёл путь от графического дизайна и сети своих образовательных
-            <a href="https://t.me/olegdevyatow">Telegram-каналов</a> с аудиторией
-            <span class="hl">50 000+</span> до UX/UI, <a href="https://olezhapth2.github.io/PRODUCT-DESIGNER/">продуктового дизайна</a> и AI-продакшена. Пять лет работаю
-            в EdTech: автор программ <a href="https://skillbox.ru">Skillbox</a> и <a href="https://contented.ru">CONTENTED</a>,
-            ментор, спикер, веду лекции, практикумы и разборы работ.
-          </p>
           <p class="links">
             <a class="btn" href="https://bootcamp.skillbox.ru/design_miniapp"><span>Кейс Skillbox</span></a>
             <a class="btn" href="https://olezhapth2.github.io/PRODUCT-DESIGNER/"><span>Портфолио</span></a>
@@ -359,9 +367,15 @@ body, .ticker, .wave a { transition: background-color .45s ease, color .45s ease
           <h3>Актуализация формата</h3>
           <p>В линейке школы есть AI VideoLab, AI-Film, нейрофотография и <a href="https://www.midjourney.com">Midjourney</a>. Предлагаю модуль о том, как представить готовый фильм за пределами учебной платформы — на персональном сайте режиссёра.</p>
           <p>Участник оформляет фильм, синопсис, кадры, авторскую биографию и контакты на двухъязычной странице. Такой формат подходит и для <a href="https://olezhapth2.github.io/PRODUCT-DESIGNER/">портфолио</a>, и для отправки проекта на международные площадки.</p>
+          <p class="feats">
+            <span><i>+</i> Бесплатные</span><span><i>+</i> Рабочие в РФ</span><span><i>+</i> Удобные опенсорс инструменты</span><span><i>+</i> Практика с результатом в конце</span><span><i>+</i> Ссылки и личные .md</span>
+          </p>
 
           <h3>Интеграция и развитие</h3>
-          <p>AI+Web можно встроить как продолжение текущего курса и отдельный продукт для допродажи. Также готов развиваться как медийный эксперт: контент-план на первый месяц уже есть, следующие этапы тоже продуманы.</p>
+          <p>AI+Web можно встроить как продолжение текущего курса и отдельный продукт для допродажи.</p>
+          <p>Емкость направления растёт последние годы, и уже сегодня можно наговорить на полноценный курс лекций — как уже делают <a href="https://academy.claude.com/courses">Anthropic</a>.</p>
+          <p>Также готов развиваться как медийный эксперт: контент-план на первый месяц уже есть. Призван показать минимальный порог входа и простоту решений.</p>
+          <p>Готов обсуждать детали, ваши вводные, формат, посыл и реализацию.</p>
 
           <p class="links footer-links">
             <a class="btn" href="mailto:olegdevyatow@gmail.com"><span>Почта</span></a>
@@ -836,6 +850,25 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
   const pl = document.getElementById("preloader");
   if (!pl) return;
   const video = pl.querySelector("video");
+  const cap = document.getElementById("plCaption");
+
+  // счётчик: быстрое перелистывание, потом фиксация "AI + WEB." и заново
+  if (cap) {
+    const FINAL = "AI + WEB.";
+    const GLYPHS = "8\u04AEO0AIWEB+.#/*9";
+    let frame = 0;
+    const iv = setInterval(() => {
+      if (!document.body.contains(cap)) return clearInterval(iv);
+      frame++;
+      let out = "", done = true;
+      for (let i = 0; i < FINAL.length; i++) {
+        if (FINAL[i] === " " || frame >= 6 + i * 3) out += FINAL[i];
+        else { out += GLYPHS[(frame + i * 5) % GLYPHS.length]; done = false; }
+      }
+      cap.textContent = out;
+      if (done && frame > 6 + FINAL.length * 3 + 25) frame = 0; // пауса ~1.3с и новая прокрутка
+    }, 50);
+  }
   // скролл заблокирован, пока прелоадер на экране
   document.documentElement.style.overflow = "hidden";
   const block = e => e.preventDefault();
@@ -880,6 +913,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
       const p = Math.min(1, (now - t0) / dur);
       draw(easeInOut(p));
       video.style.opacity = 1 - easeInOut(p); // гифка исчезает вместе с фоном, одним прогрессом
+      if (cap) cap.style.opacity = 1 - easeInOut(p); // и счётчик тоже
       if (p < 1) requestAnimationFrame(tick);
       else { pl.remove(); unlock(); }
     };
