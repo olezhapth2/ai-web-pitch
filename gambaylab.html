@@ -33,7 +33,7 @@
   --text: #f4f4f6;
   --text-dim: #a8a9b0;
   --line: rgba(255,255,255,.14);
-  --acc: #7ee2a8;
+  --acc: #74a7ff;
 }
 * { margin: 0; box-sizing: border-box; }
 body {
@@ -114,7 +114,12 @@ body {
   transform: translate(-50%, -50%); z-index: 0;
 }
 .media { width: 100%; height: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,.3); }
-.media .slot { position: relative; width: 100%; height: 100%; background: #fff; }
+.media .slot { position: relative; width: 100%; height: 100%; background: #0a0a0c; }
+.media .slot video {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  object-fit: cover; display: block;
+}
 .media .shade {
   position: absolute; inset: 0;
   background: #000; opacity: 0; /* вернуть с видео: 0.5 - progress * 0.3 */
@@ -133,7 +138,6 @@ body {
   margin-bottom: 1.3rem; color: #fff;
 }
 .content h3 {
-  font-family: "Medeo Mono", ui-monospace, monospace;
   font-size: .8rem; font-weight: 600;
   letter-spacing: .12em; text-transform: uppercase;
   color: var(--text-dim);
@@ -145,7 +149,6 @@ body {
 .content .acc { color: var(--acc); }
 .content .offer { margin: .2rem 0 .9rem; }
 .content .offer-kicker {
-  font-family: "Medeo Mono", ui-monospace, monospace;
   font-size: .8rem; font-weight: 600;
   letter-spacing: .14em; text-transform: uppercase;
   color: var(--text-dim);
@@ -158,7 +161,7 @@ body {
 }
 .content .offer-title .acc {
   color: var(--acc);
-  text-shadow: 0 0 26px rgba(126,226,168,.28);
+  text-shadow: 0 0 26px rgba(116,167,255,.3);
 }
 .content .offer-title .paren { color: var(--text-dim); font-weight: 400; }
 .content .pitch { margin-top: 0; }
@@ -169,12 +172,12 @@ body {
 }
 .content .pitch a, .content a.hl {
   color: var(--acc); text-decoration: underline;
-  text-decoration-color: rgba(126,226,168,.45); text-underline-offset: 3px;
+  text-decoration-color: rgba(116,167,255,.5); text-underline-offset: 3px;
 }
 .content .pitch a:hover, .content a.hl:hover { color: var(--text); text-decoration-color: var(--text); }
 .content p { font-size: 1rem; line-height: 1.65; color: var(--text-dim); margin-bottom: .95rem; }
 .content .hl { color: var(--text); font-weight: 600; }
-.content p a:not(.btn) { color: var(--acc); text-decoration: underline; text-decoration-color: rgba(126,226,168,.45); text-underline-offset: 3px; }
+.content p a:not(.btn) { color: var(--acc); text-decoration: underline; text-decoration-color: rgba(116,167,255,.5); text-underline-offset: 3px; }
 .content p a:not(.btn):hover { color: var(--text); text-decoration-color: var(--text); }
 
 /* === Кнопки (SpecularButton, vanilla-порт) === */
@@ -283,7 +286,7 @@ body {
 
           <div class="media-wrap" id="media">
             <div class="media">
-              <div class="slot"><video src="media/g13.mp4" autoplay muted loop playsinline style="width:100%;height:100%;object-fit:cover;display:block"></video></div>
+              <div class="slot"><video src="media/g13.mp4" autoplay muted loop playsinline></video></div>
               <div class="shade" id="shade"></div>
             </div>
           </div>
@@ -456,6 +459,24 @@ const shade = document.getElementById("shade");
 const bg = document.getElementById("bg");
 const titles = document.getElementById("titles");
 const content = document.getElementById("content");
+
+const heroVid = document.querySelector("#media video");
+function sizeHero() {
+  if (!heroVid) return;
+  const isMobile = window.innerWidth < 768;
+  const fw = Math.min(300 + (isMobile ? 650 : 1250), window.innerWidth * 0.95);
+  const fh = Math.min(400 + (isMobile ? 200 : 400), window.innerHeight * 0.85);
+  const ar = (heroVid.videoWidth || 16) / (heroVid.videoHeight || 9);
+  let w = fw, h = fw / ar;
+  if (h < fh) { h = fh; w = fh * ar; }
+  heroVid.style.width = Math.round(w) + "px";
+  heroVid.style.height = Math.round(h) + "px";
+}
+if (heroVid) {
+  heroVid.addEventListener("loadedmetadata", sizeHero);
+  window.addEventListener("resize", sizeHero);
+  sizeHero();
+}
 
 function render() {
   const isMobile = window.innerWidth < 768;
@@ -749,8 +770,6 @@ function specular(el, opts = {}) {
 }
 
 document.querySelectorAll(".btn").forEach((el) => specular(el, { radius: 14 }));
-const mediaCard = document.getElementById("media");
-if (mediaCard) specular(mediaCard, { radius: 16 });
 
 
 /* ========= Прелоадер: dither-dissolve, белый, от краёв к центру ========= */
