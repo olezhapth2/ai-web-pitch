@@ -33,6 +33,7 @@
   --text: #f4f4f6;
   --text-dim: #a8a9b0;
   --line: rgba(255,255,255,.14);
+  --acc: #7ee2a8;
 }
 * { margin: 0; box-sizing: border-box; }
 body {
@@ -136,15 +137,45 @@ body {
   font-size: .8rem; font-weight: 600;
   letter-spacing: .12em; text-transform: uppercase;
   color: var(--text-dim);
-  margin: 2.2rem 0 .9rem;
+  margin: 1.9rem 0 .8rem;
+  display: flex; align-items: center; gap: .8rem;
 }
+.content h3::after { content: ""; flex: 1; height: 1px; background: var(--line); }
 .content .lead { color: var(--text-dim); font-size: clamp(1.05rem, 1.8vw, 1.2rem); line-height: 1.6; }
-.content .offer { color: var(--text); font-weight: 600; letter-spacing: -.01em; margin-bottom: .35rem; }
+.content .acc { color: var(--acc); }
+.content .offer { margin: .2rem 0 .9rem; }
+.content .offer-kicker {
+  font-family: "Medeo Mono", ui-monospace, monospace;
+  font-size: .8rem; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--text-dim);
+}
+.content .offer-kicker .paren { color: var(--text-dim); opacity: .55; }
+.content .offer-title {
+  font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+  font-weight: 700; letter-spacing: -.03em; line-height: 1.15;
+  color: var(--text); margin-top: .45rem;
+}
+.content .offer-title .acc {
+  color: var(--acc);
+  text-shadow: 0 0 26px rgba(126,226,168,.28);
+}
+.content .offer-title .paren { color: var(--text-dim); font-weight: 400; }
 .content .pitch { margin-top: 0; }
-.content p { font-size: 1rem; line-height: 1.65; color: var(--text-dim); margin-bottom: 1.1rem; }
+.content .pitch::before {
+  content: "→ ";
+  font-family: "Medeo Mono", ui-monospace, monospace;
+  color: var(--acc);
+}
+.content .pitch a, .content a.hl {
+  color: var(--acc); text-decoration: underline;
+  text-decoration-color: rgba(126,226,168,.45); text-underline-offset: 3px;
+}
+.content .pitch a:hover, .content a.hl:hover { color: var(--text); text-decoration-color: var(--text); }
+.content p { font-size: 1rem; line-height: 1.65; color: var(--text-dim); margin-bottom: .95rem; }
 .content .hl { color: var(--text); font-weight: 600; }
-.content p a:not(.btn) { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
-.content p a:not(.btn):hover { color: var(--text-dim); }
+.content p a:not(.btn) { color: var(--acc); text-decoration: underline; text-decoration-color: rgba(126,226,168,.45); text-underline-offset: 3px; }
+.content p a:not(.btn):hover { color: var(--text); text-decoration-color: var(--text); }
 
 /* === Кнопки (SpecularButton, vanilla-порт) === */
 .content .links { display: flex; flex-wrap: wrap; gap: .9rem; }
@@ -260,29 +291,33 @@ body {
         </div>
 
         <div class="content" id="content">
-          <p class="lead" style="margin-bottom:1.6rem">Привет MSOLOVEI !!</p>
+          <p class="lead" style="margin-bottom:1.2rem"><span class="acc">✳</span> Привет MSOLOVEI !!</p>
 
           <p>Я Олег Девятов, дизайнер с 9+ годами опыта и преподаватель с 1000+ учеников.</p>
 
-          <p class="lead offer">Предлагаю запустить вместе направление AI + Web:</p>
+          <div class="offer">
+            <div class="offer-kicker"><span class="paren">(</span>Предлагаю запустить вместе<span class="paren">)</span></div>
+            <p class="offer-title">направление <span class="acc">AI + Web</span><span class="paren">:</span></p>
+          </div>
           <p class="lead pitch">Вы учите AI-фото, видео и музыке и работе с брендами, я показываю, как собрать это в брендовый сайт с кейсами и услугами.</p>
 
           <p>
-            Прошёл путь от графического дизайна и сети своих образовательных Telegram-каналов с аудиторией
-            <span class="hl">50 000+</span> до UX/UI, продуктового дизайна и AI-продакшена. Пять лет работаю
-            в EdTech: автор программ <span class="hl">Skillbox</span> и <span class="hl">CONTENTED</span>,
+            Прошёл путь от графического дизайна и сети своих образовательных
+            <a href="https://t.me/olegdevyatow">Telegram-каналов</a> с аудиторией
+            <span class="hl">50 000+</span> до UX/UI, <a href="https://olezhapth2.github.io/PRODUCT-DESIGNER/">продуктового дизайна</a> и AI-продакшена. Пять лет работаю
+            в EdTech: автор программ <a href="https://skillbox.ru">Skillbox</a> и <a href="https://contented.ru">CONTENTED</a>,
             ментор, спикер, веду лекции, практикумы и разборы работ.
           </p>
           <p class="links">
             <a class="btn" href="https://bootcamp.skillbox.ru/design_miniapp"><span>Кейс Skillbox</span></a>
-            <a class="btn" href="https://olegdvtv.notion.site/Product-Designer-UXUI-2c3dc984ea3d8019904fcf2c60dfc7bd?pvs=73"><span>Портфолио</span></a>
+            <a class="btn" href="https://olezhapth2.github.io/PRODUCT-DESIGNER/"><span>Портфолио</span></a>
           </p>
 
-          <h3>01 — Что предлагаю</h3>
+          <h3><span class="acc">01</span> — Что предлагаю</h3>
           <p>В вашей линейке соединяются AI-фото, видео, музыка и работа с брендами. Предлагаю продукт, который собирает эти навыки в одну публичную точку: персональный сайт с кейсами и услугами.</p>
-          <p>Участник определяет позиционирование, оформляет работы в кейсы и собирает сайт под собственный визуальный стиль. Финальный результат — не учебный макет, а опубликованное портфолио.</p>
+          <p>Участник определяет позиционирование, оформляет работы в кейсы и собирает сайт под собственный визуальный стиль. Финальный результат — не учебный макет, а опубликованное <a href="https://olezhapth2.github.io/PRODUCT-DESIGNER/">портфолио</a>.</p>
 
-          <h3>02 — Как встроить</h3>
+          <h3><span class="acc">02</span> — Как встроить</h3>
           <p>AI+Web можно встроить как продолжение текущего курса и отдельный продукт для допродажи. Также готов развиваться как медийный эксперт: контент-план на первый месяц уже есть, следующие этапы тоже продуманы.</p>
 
           <p class="links footer-links">
