@@ -4,19 +4,38 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Олег Девятов — AI+Web</title>
+<script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
 <style>
   * { margin: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a0c; --text: #f4f4f6; --dim: #a8a9b0;
+    --line: rgba(255,255,255,.14); --bar: rgba(10,10,12,.92);
+  }
+  [data-theme="light"] {
+    --bg: #f5f5f3; --text: #141416; --dim: #5f6066;
+    --line: rgba(10,10,14,.16); --bar: rgba(245,245,243,.92);
+  }
   body {
     font-family: system-ui, -apple-system, sans-serif;
-    background: #0a0a0c; color: #f4f4f6;
+    background: var(--bg); color: var(--text);
     -webkit-font-smoothing: antialiased;
     min-height: 100dvh; padding: 4rem 1.5rem;
     display: flex; justify-content: center; align-items: center;
+    transition: background-color .45s ease, color .45s ease;
   }
   main { width: 100%; max-width: 34rem; text-align: center; }
   h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -.03em; margin-bottom: .8rem; }
-  p { color: #a8a9b0; font-size: .95rem; line-height: 1.6; }
-  a { color: #f4f4f6; }
+  p { color: var(--dim); font-size: .95rem; line-height: 1.6; }
+  a { color: var(--text); }
+  .theme-toggle {
+    position: fixed; top: 18px; right: 18px;
+    width: 38px; height: 38px; border-radius: 50%;
+    border: 1px solid var(--line); background: var(--bar);
+    color: var(--text); font-size: 1rem; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .2s ease;
+  }
+  .theme-toggle:hover { transform: scale(1.1); }
 </style>
 </head>
 <body>
@@ -25,5 +44,17 @@
   <p>Откройте вашу персональную ссылку — она в письме.<br />
   Связаться: <a href="mailto:olegdevyatow@gmail.com">olegdevyatow@gmail.com</a> · <a href="https://t.me/olegdevyatow">t.me/olegdevyatow</a></p>
 </main>
+<button class="theme-toggle" id="themeToggle" aria-label="Переключить тему"><span id="themeIcon">☀</span></button>
+<script>
+  var icon = document.getElementById("themeIcon");
+  function sync() { icon.textContent = document.documentElement.dataset.theme === "light" ? "\u263E" : "\u2600"; }
+  sync();
+  document.getElementById("themeToggle").addEventListener("click", function () {
+    var next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem("theme", next); } catch (e) {}
+    sync();
+  });
+</script>
 </body>
 </html>

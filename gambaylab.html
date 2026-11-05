@@ -33,7 +33,32 @@
   --text: #f4f4f6;
   --text-dim: #a8a9b0;
   --line: rgba(255,255,255,.14);
+  --line-strong: rgba(255,255,255,.4);
   --acc: #74a7ff;
+  --acc-glow: rgba(116,167,255,.3);
+  --acc-underline: rgba(116,167,255,.5);
+  --bar-bg: rgba(10,10,12,.92);
+  --scrim: 10,10,12;
+  --btn-bg: rgba(255,255,255,.05);
+  --btn-bg-hover: rgba(255,255,255,.1);
+  --card-shadow: 0 8px 30px rgba(0,0,0,.45);
+  --media-shadow: 0 0 50px rgba(0,0,0,.3);
+}
+[data-theme="light"] {
+  --bg: #f5f5f3;
+  --text: #141416;
+  --text-dim: #5f6066;
+  --line: rgba(10,10,14,.14);
+  --line-strong: rgba(10,10,14,.4);
+  --acc: #2f6fe0;
+  --acc-glow: rgba(47,111,224,.2);
+  --acc-underline: rgba(47,111,224,.55);
+  --bar-bg: rgba(245,245,243,.92);
+  --scrim: 245,245,243;
+  --btn-bg: rgba(10,10,14,.05);
+  --btn-bg-hover: rgba(10,10,14,.1);
+  --card-shadow: 0 8px 30px rgba(0,0,0,.16);
+  --media-shadow: 0 0 50px rgba(0,0,0,.12);
 }
 * { margin: 0; box-sizing: border-box; }
 body {
@@ -50,7 +75,7 @@ body {
 .ticker {
   position: relative; z-index: 30;
   overflow: hidden;
-  background: rgba(10,10,12,.92);
+  background: var(--bar-bg);
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -94,14 +119,14 @@ body {
   aspect-ratio: var(--ar, 16 / 9);
   border-radius: 14px; overflow: hidden;
   border: 1px solid var(--line);
-  box-shadow: 0 8px 30px rgba(0,0,0,.45);
+  box-shadow: var(--card-shadow);
 }
 .card img, .card video { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
 .bg-scrim {
   position: absolute; top: 0; left: 0; right: 0; height: 100dvh; z-index: 1;
   background:
-    radial-gradient(ellipse 60% 55% at 50% 50%, rgba(10,10,12,.92) 0%, rgba(10,10,12,.55) 55%, rgba(10,10,12,0) 100%),
-    linear-gradient(to bottom, rgba(10,10,12,.75) 0%, rgba(10,10,12,.25) 18%, rgba(10,10,12,.25) 82%, rgba(10,10,12,.75) 100%);
+    radial-gradient(ellipse 60% 55% at 50% 50%, rgba(var(--scrim),.92) 0%, rgba(var(--scrim),.55) 55%, rgba(var(--scrim),0) 100%),
+    linear-gradient(to bottom, rgba(var(--scrim),.75) 0%, rgba(var(--scrim),.25) 18%, rgba(var(--scrim),.25) 82%, rgba(var(--scrim),.75) 100%);
   pointer-events: none;
 }
 
@@ -113,8 +138,8 @@ body {
   position: absolute; top: 50%; left: 50%;
   transform: translate(-50%, -50%); z-index: 0;
 }
-.media { width: 100%; height: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,.3); }
-.media .slot { position: relative; width: 100%; height: 100%; background: #0a0a0c; }
+.media { width: 100%; height: 100%; border-radius: 16px; overflow: hidden; box-shadow: var(--media-shadow); }
+.media .slot { position: relative; width: 100%; height: 100%; background: var(--bg); }
 .media .slot video {
   position: absolute; left: 50%; top: 50%;
   transform: translate(-50%, -50%);
@@ -135,7 +160,7 @@ body {
 .content h2 {
   font-size: clamp(1.6rem, 3.2vw, 2.4rem);
   font-weight: 700; letter-spacing: -.03em; line-height: 1.2;
-  margin-bottom: 1.3rem; color: #fff;
+  margin-bottom: 1.3rem; color: var(--text);
 }
 .content h3 {
   font-size: .8rem; font-weight: 600;
@@ -161,7 +186,7 @@ body {
 }
 .content .offer-title .acc {
   color: var(--acc);
-  text-shadow: 0 0 26px rgba(116,167,255,.3);
+  text-shadow: 0 0 26px var(--acc-glow);
 }
 .content .offer-title .paren { color: var(--text-dim); font-weight: 400; }
 .content .pitch { margin-top: 0; }
@@ -172,7 +197,7 @@ body {
 }
 .content .pitch a, .content a.hl {
   color: var(--acc); text-decoration: underline;
-  text-decoration-color: rgba(116,167,255,.5); text-underline-offset: 3px;
+  text-decoration-color: var(--acc-underline); text-underline-offset: 3px;
 }
 .content .pitch a:hover, .content a.hl:hover { color: var(--text); text-decoration-color: var(--text); }
 .content p { font-size: 1rem; line-height: 1.65; color: var(--text-dim); margin-bottom: .95rem; }
@@ -188,14 +213,14 @@ body {
   display: inline-flex; align-items: center; justify-content: center;
   padding: 13px 24px;
   border: 0; border-radius: 14px;
-  background: rgba(255,255,255,.05);
+  background: var(--btn-bg);
   color: var(--text); font-family: inherit; font-weight: 500; font-size: .9rem;
   letter-spacing: .01em; text-decoration: none; cursor: pointer;
   -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
   box-shadow: 0 10px 24px -14px rgba(0,0,0,.45);
   transition: transform .25s cubic-bezier(.2,.8,.2,1), background-color .2s ease;
 }
-.btn:hover { background: rgba(255,255,255,.1); }
+.btn:hover { background: var(--btn-bg-hover); }
 .btn:active { transform: scale(.97); }
 .btn > span { position: relative; z-index: 2; }
 .sb-canvas {
@@ -229,7 +254,7 @@ body {
   border: 1px solid var(--line); border-radius: 10px;
   transition: color .2s ease, border-color .2s ease;
 }
-.wave a:hover { color: var(--text); border-color: rgba(255,255,255,.4); }
+.wave a:hover { color: var(--text); border-color: var(--line-strong); }
 
 @media (max-width: 640px) {
   .ticker-group span { font-size: .72rem; letter-spacing: .08em; padding: 13px 0; }
@@ -263,7 +288,22 @@ body {
   object-fit: cover;
   border-radius: 16px;
 }
+
+
+/* === Переключатель темы === */
+.theme-toggle {
+  position: fixed; top: 66px; right: 18px; z-index: 200;
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--bar-bg);
+  color: var(--text); font-size: 1rem; line-height: 1; cursor: pointer;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .2s ease, background-color .3s ease, color .3s ease;
+}
+.theme-toggle:hover { transform: scale(1.1); }
+body, .ticker, .wave a { transition: background-color .45s ease, color .45s ease, border-color .45s ease; }
 </style>
+<script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
 </head>
 <body data-base="">
 <div class="preloader" id="preloader" aria-hidden="true">
@@ -338,6 +378,7 @@ body {
   </div>
 </div>
 
+<button class="theme-toggle" id="themeToggle" aria-label="Переключить тему"><span id="themeIcon">☀</span></button>
 <script>
 /* ================= БЕГУЩАЯ СТРОКА: тезисы ================= */
 const THESES = [
@@ -469,8 +510,8 @@ function sizeHero() {
   const ar = (heroVid.videoWidth || 16) / (heroVid.videoHeight || 9);
   let w = fw, h = fw / ar;
   if (h < fh) { h = fh; w = fh * ar; }
-  heroVid.style.width = Math.round(w) + "px";
-  heroVid.style.height = Math.round(h) + "px";
+  heroVid.style.width = Math.ceil(w) + "px";
+  heroVid.style.height = Math.ceil(h) + "px"; // с запасом >= финального размера — фон не просвечивает
 }
 if (heroVid) {
   heroVid.addEventListener("loadedmetadata", sizeHero);
@@ -769,7 +810,25 @@ function specular(el, opts = {}) {
   measure();
 }
 
-document.querySelectorAll(".btn").forEach((el) => specular(el, { radius: 14 }));
+function initSpeculars() {
+  document.querySelectorAll(".sb-canvas").forEach((c) => c.remove());
+  const light = document.documentElement.dataset.theme === "light";
+  document.querySelectorAll(".btn").forEach((el) => specular(el, light
+    ? { radius: 14, line: "#17171b", base: "#c8c9cf", idle: .4 }
+    : { radius: 14 }));
+}
+initSpeculars();
+
+const themeIcon = document.getElementById("themeIcon");
+const syncThemeUI = () => { if (themeIcon) themeIcon.textContent = document.documentElement.dataset.theme === "light" ? "\u263E" : "\u2600"; };
+syncThemeUI();
+document.getElementById("themeToggle")?.addEventListener("click", () => {
+  const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem("theme", next); } catch (e) {}
+  syncThemeUI();
+  initSpeculars();
+});
 
 
 /* ========= Прелоадер: dither-dissolve, белый, от краёв к центру ========= */
