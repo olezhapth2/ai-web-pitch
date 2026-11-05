@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Олег Девятов — AI+Web</title>
-<script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="dark"?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
 <style>
   * { margin: 0; box-sizing: border-box; }
   :root {
@@ -44,7 +44,7 @@
   <p>Откройте вашу персональную ссылку — она в письме.<br />
   Связаться: <a href="mailto:olegdevyatow@gmail.com">olegdevyatow@gmail.com</a> · <a href="https://t.me/olegdevyatow">t.me/olegdevyatow</a></p>
 </main>
-<button class="theme-toggle" id="themeToggle" aria-label="Переключить тему"><span id="themeIcon">☀</span></button>
+<button class="theme-toggle" id="themeToggle" aria-label="Переключить тему"><span id="themeIcon">☾</span></button>
 <script>
   var icon = document.getElementById("themeIcon");
   function sync() { icon.textContent = document.documentElement.dataset.theme === "light" ? "\u263E" : "\u2600"; }

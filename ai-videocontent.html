@@ -166,13 +166,13 @@ body {
   font-size: .8rem; font-weight: 600;
   letter-spacing: .12em; text-transform: uppercase;
   color: var(--text-dim);
-  margin: 1.3rem 0 .6rem;
+  margin: 2.4rem 0 1rem;
   display: flex; align-items: center; gap: .8rem;
 }
 .content h3::after { content: ""; flex: 1; height: 1px; background: var(--line); }
-.content .lead { color: var(--text-dim); font-size: clamp(1.05rem, 1.8vw, 1.2rem); line-height: 1.45; }
+.content .lead { color: var(--text-dim); font-size: clamp(1.05rem, 1.8vw, 1.2rem); line-height: 1.6; }
 .content .acc { color: var(--acc); }
-.content .offer { margin: .1rem 0 .5rem; }
+.content .offer { margin: .3rem 0 1.1rem; }
 .content .offer-kicker {
   font-size: .8rem; font-weight: 600;
   letter-spacing: .14em; text-transform: uppercase;
@@ -182,7 +182,7 @@ body {
 .content .offer-title {
   font-size: clamp(1.7rem, 3.4vw, 2.5rem);
   font-weight: 700; letter-spacing: -.03em; line-height: 1.15;
-  color: var(--text); margin-top: 0;
+  color: var(--text); margin-top: .55rem;
 }
 .content .offer-title .acc {
   color: var(--acc);
@@ -190,7 +190,7 @@ body {
 }
 .content .offer-title .paren { color: var(--text-dim); font-weight: 400; }
 .content .pitch { margin-top: 0; }
-.content .feats { display: flex; flex-wrap: wrap; gap: .45rem; margin: .3rem 0 0; }
+.content .feats { display: flex; flex-wrap: wrap; gap: .55rem; margin: .7rem 0 0; }
 .content .feats span {
   display: inline-flex; align-items: center; gap: .4em;
   font-size: .8rem; color: var(--text-dim);
@@ -208,14 +208,14 @@ body {
   text-decoration-color: var(--acc-underline); text-underline-offset: 3px;
 }
 .content .pitch a:hover, .content a.hl:hover { color: var(--text); text-decoration-color: var(--text); }
-.content p { font-size: 1rem; line-height: 1.5; color: var(--text-dim); margin-bottom: .7rem; }
+.content p { font-size: 1rem; line-height: 1.65; color: var(--text-dim); margin-bottom: 1.15rem; }
 .content .hl { color: var(--text); font-weight: 600; }
 .content p a:not(.btn) { color: var(--acc); text-decoration: underline; text-decoration-color: rgba(116,167,255,.5); text-underline-offset: 3px; }
 .content p a:not(.btn):hover { color: var(--text); text-decoration-color: var(--text); }
 
 /* === Кнопки (SpecularButton, vanilla-порт) === */
 .content .links { display: flex; flex-wrap: wrap; gap: .9rem; }
-.content .links + p, .content p + .links { margin-top: .9rem; }
+.content .links + p, .content p + .links { margin-top: 1.5rem; }
 .btn {
   position: relative; isolation: isolate;
   display: inline-flex; align-items: center; justify-content: center;
@@ -236,7 +236,7 @@ body {
   width: calc(100% + 48px); height: calc(100% + 48px);
   pointer-events: none; z-index: 1; display: block;
 }
-.content .footer-links { margin-top: 1.6rem; }
+.content .footer-links { margin-top: 3rem; }
 
 .content .contacts {
   margin-top: 2.2rem;
@@ -318,7 +318,7 @@ body {
 .theme-toggle:hover { transform: scale(1.1); }
 body, .ticker, .wave a { transition: background-color .45s ease, color .45s ease, border-color .45s ease; }
 </style>
-<script>try{var t=localStorage.getItem("theme");if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="dark"?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
 </head>
 <body data-base="">
 <div class="preloader" id="preloader" aria-hidden="true">
@@ -350,7 +350,7 @@ body, .ticker, .wave a { transition: background-color .45s ease, color .45s ease
         </div>
 
         <div class="content" id="content">
-          <p class="lead" style="margin-bottom:1rem"><span class="acc">✳</span> Привет AI VideoContent !!</p>
+          <p class="lead" style="margin-bottom:1.5rem"><span class="acc">✳</span> Привет AI VideoContent !!</p>
 
           <p>Я Олег Девятов, Старший UI дизайнер, ex ментор, автор, спикер, <a href="https://skillbox.ru">Skillbox</a> &amp; <a href="https://contented.ru">CONTENTED</a>, создатель сети <a href="https://t.me/istudy">1</a> <a href="https://t.me/a_study">2</a> <a href="https://t.me/c4study">3</a> <a href="https://t.me/pprostudy">4</a> Telegram-каналов. Предлагаю вместе запустить:</p>
 
@@ -373,7 +373,7 @@ body, .ticker, .wave a { transition: background-color .45s ease, color .45s ease
 
           <h3>Интеграция и развитие</h3>
           <p>AI+Web можно встроить как продолжение текущего курса и отдельный продукт для допродажи.</p>
-          <p>Емкость направления растёт последние годы, и уже сегодня можно наговорить на полноценный курс лекций — как уже делают <a href="https://academy.claude.com/courses">Anthropic</a>.</p>
+          <p>Емкость направления растет последие годы и уж сегодня, можно наговорить на полноценный курс лекций на тему как уже делают <a href="https://academy.claude.com/courses">антропик</a>.</p>
           <p>Также готов развиваться как медийный эксперт: контент-план на первый месяц уже есть. Призван показать минимальный порог входа и простоту решений.</p>
           <p>Готов обсуждать детали, ваши вводные, формат, посыл и реализацию.</p>
 
@@ -392,7 +392,7 @@ body, .ticker, .wave a { transition: background-color .45s ease, color .45s ease
   </div>
 </div>
 
-<button class="theme-toggle" id="themeToggle" aria-label="Переключить тему"><span id="themeIcon">☀</span></button>
+<button class="theme-toggle" id="themeToggle" aria-label="Переключить тему"><span id="themeIcon">☾</span></button>
 <script>
 /* ================= БЕГУЩАЯ СТРОКА: тезисы ================= */
 const THESES = [
@@ -828,8 +828,8 @@ function initSpeculars() {
   document.querySelectorAll(".sb-canvas").forEach((c) => c.remove());
   const light = document.documentElement.dataset.theme === "light";
   document.querySelectorAll(".btn").forEach((el) => specular(el, light
-    ? { radius: 14, line: "#17171b", base: "#c8c9cf", idle: .4 }
-    : { radius: 14 }));
+    ? { radius: 14, line: "#2f6fe0", base: "#c8c9cf", idle: .4 }
+    : { radius: 14, line: "#74a7ff" }));
 }
 initSpeculars();
 
