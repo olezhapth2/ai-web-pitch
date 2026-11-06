@@ -469,6 +469,7 @@ function getMedia(src) {
   if (IMG_RE.test(src)) {
     el = new Image();
     el.decoding = "async";
+    el.style.cssText = "position:fixed;left:0;top:0;width:2px;height:2px;opacity:0.01;pointer-events:none;z-index:9999;";
   } else {
     el = document.createElement("video");
     el.muted = true;
