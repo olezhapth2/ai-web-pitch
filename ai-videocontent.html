@@ -42,7 +42,7 @@
   --btn-bg: rgba(255,255,255,.05);
   --btn-bg-hover: rgba(255,255,255,.1);
   --card-shadow: 0 8px 30px rgba(0,0,0,.45);
-  --media-shadow: 0 0 50px rgba(0,0,0,.3);
+  --media-shadow: 0 0 60px rgba(255,255,255,.2);
 }
 [data-theme="light"] {
   --bg: #f5f5f3;
@@ -58,7 +58,7 @@
   --btn-bg: rgba(10,10,14,.05);
   --btn-bg-hover: rgba(10,10,14,.1);
   --card-shadow: 0 8px 30px rgba(0,0,0,.16);
-  --media-shadow: 0 0 50px rgba(0,0,0,.12);
+  --media-shadow: 0 10px 45px rgba(0,0,0,.28);
 }
 * { margin: 0; box-sizing: border-box; }
 body {
@@ -125,9 +125,11 @@ body {
 .bg-gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .bg-scrim {
   position: absolute; top: 0; left: 0; right: 0; height: 100dvh; z-index: 1;
-  background:
-    radial-gradient(ellipse 60% 55% at 50% 50%, rgba(var(--scrim),.92) 0%, rgba(var(--scrim),.55) 55%, rgba(var(--scrim),0) 100%),
-    linear-gradient(to bottom, rgba(var(--scrim),.75) 0%, rgba(var(--scrim),.25) 18%, rgba(var(--scrim),.25) 82%, rgba(var(--scrim),.75) 100%);
+  background: linear-gradient(to bottom,
+    rgba(var(--scrim),0) 0%,
+    rgba(var(--scrim),0) 55%,
+    rgba(var(--scrim),.2) 78%,
+    rgba(var(--scrim),.7) 100%);
   pointer-events: none;
 }
 
