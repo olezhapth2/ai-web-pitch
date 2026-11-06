@@ -1190,7 +1190,8 @@ function startDomGallery() {
 if (!startGlGallery()) startDomGallery();
 
 /* ========= ScrollExpandMedia: развёртка скроллом ========= */
-let progress = 0;
+let progress = 0;        // сглаженное (рендерится)
+let progressTarget = 0;  // цель от колеса/тача — progress догоняет её на rAF
 let expanded = false;
 
 const media = document.getElementById("media");
@@ -1245,10 +1246,9 @@ function step(delta) {
     return;
   }
   window.scrollTo(0, 0);
-  progress = Math.min(Math.max(progress + delta, 0), 1);
-  if (progress >= 1) expanded = true;
-  else if (progress < 0.75) expanded = false;
-  render();
+  progressTarget = Math.min(Math.max(progressTarget + delta, 0), 1);
+  if (progressTarget >= 1) expanded = true;
+  else if (progressTarget < 0.75) expanded = false;
 }
 
 window.addEventListener("wheel", (e) => {
@@ -1274,6 +1274,22 @@ window.addEventListener("touchmove", (e) => {
 
 window.addEventListener("resize", render);
 render();
+
+/* плавная догонка progress к цели: рывки колеса → непрерывный glide */
+let easeLast = performance.now();
+function easeTick(now) {
+  requestAnimationFrame(easeTick);
+  const dt = Math.min(0.05, (now - easeLast) / 1000);
+  easeLast = now;
+  const d = progressTarget - progress;
+  if (Math.abs(d) < 0.0004) {
+    if (progress !== progressTarget) { progress = progressTarget; render(); }
+    return;
+  }
+  progress += d * (1 - Math.exp(-12 * dt));
+  render();
+}
+requestAnimationFrame(easeTick);
 
 /* ========= SpecularButton — vanilla-порт (React Bits, WebGL2) ========= */
 const SB_VERT = `#version 300 es
