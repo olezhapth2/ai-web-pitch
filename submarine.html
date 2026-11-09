@@ -426,13 +426,23 @@ for (const tickerEl of document.querySelectorAll(".ticker-track")) {
    Без WebGL2 — прежняя DOM-галерея (фолбэк). */
 const BASE = document.body.dataset.base || "";
 const DIMS = {"g09.mp4":[1500,830],"g10.mp4":[1280,998],"g15.mp4":[1600,900],"g20.mp4":[480,380],"n08.mp4":[406,720],"n09.mp4":[406,720],"n14.mp4":[720,398],"n19.mp4":[400,396],"p03.jpg":[720,415],"p09.jpg":[720,253],"p15.jpg":[720,345],"g05.mp4":[900,702],"g06.mp4":[864,800],"g11.mp4":[1024,80],"g16.mp4":[480,516],"n04.mp4":[720,394],"n05.mp4":[720,382],"n10.mp4":[720,406],"n15.mp4":[720,406],"p02.jpg":[720,253],"p08.jpg":[720,415],"p14.jpg":[720,415],"p20.jpg":[720,415],"g01.mp4":[1526,618],"g02.mp4":[1600,816],"g07.mp4":[576,592],"g12.mp4":[1024,80],"g25.mp4":[480,270],"n01.mp4":[406,720],"n06.mp4":[406,720],"n11.mp4":[600,378],"p01.jpg":[720,345],"p07.jpg":[720,253],"p13.jpg":[720,253],"p19.jpg":[720,253],"g13.mp4":[400,712],"g14.mp4":[400,712],"g19.mp4":[480,476],"g24.mp4":[480,314],"n12.mp4":[720,720],"n13.mp4":[720,388],"n18.mp4":[340,720],"p04.jpg":[720,345],"p10.jpg":[720,345],"p16.jpg":[720,253],"g04.mp4":[1306,1120],"g17.mp4":[1600,900],"g18.mp4":[1526,618],"g23.mp4":[1600,900],"n16.mp4":[720,406],"n17.mp4":[406,720],"p05.jpg":[720,415],"p11.jpg":[720,415],"p17.jpg":[720,253],"g03.mp4":[1500,830],"g08.mp4":[1280,998],"g21.mp4":[1600,900],"g22.mp4":[480,380],"n02.mp4":[406,720],"n07.mp4":[406,720],"n20.mp4":[720,398],"p06.jpg":[720,415],"p12.jpg":[720,415],"p18.jpg":[720,253]};
-const DEFAULT_ROWS = [
-  ["p04.jpg","g12.mp4","p07.jpg","g06.mp4","p14.jpg","g11.mp4","p18.jpg","g04.mp4","p16.jpg","g08.mp4","p19.jpg","n17.mp4"],
-  ["p05.jpg","n01.mp4","p06.jpg","g19.mp4","p09.jpg","g22.mp4","p15.jpg","g10.mp4","p03.jpg","n09.mp4","p01.jpg","n02.mp4"],
-  ["p02.jpg","g07.mp4","p08.jpg","n03.mp4","p11.jpg","g21.mp4","p13.jpg","g14.mp4","p20.jpg","g03.mp4","p17.jpg","n10.mp4"],
-  ["p10.jpg","n05.mp4","p12.jpg","n14.mp4","n12.mp4","g18.mp4","n19.mp4","g25.mp4","n07.mp4","n04.mp4","g16.mp4","g01.mp4"],
+/* два набора рядов — по яркости (замер luma всех media): светлая тема → светлые,
+   тёмная → тёмные/чёрные. Механика рядов не меняется, только контент. */
+const ROWS_LIGHT = [
+  ["g03.mp4","p09.jpg","g15.mp4","p04.jpg","n09.mp4","g21.mp4","p18.jpg","g23.mp4"],
+  ["g04.mp4","p01.jpg","g10.mp4","p14.jpg","g24.mp4","n10.mp4","n01.mp4"],
+  ["g09.mp4","p02.jpg","g12.mp4","p05.jpg","n14.mp4","g22.mp4","p19.jpg"],
+  ["g18.mp4","p03.jpg","p12.jpg","n15.mp4","p10.jpg","p20.jpg","n04.mp4"],
 ];
-const ROWS = window.ROWS || DEFAULT_ROWS;
+const ROWS_DARK = [
+  ["g01.mp4","p06.jpg","g05.mp4","n02.mp4","g11.mp4","p11.jpg","g19.mp4","n11.mp4","g25.mp4"],
+  ["g02.mp4","p07.jpg","g13.mp4","n03.mp4","g16.mp4","p13.jpg","g14.mp4","n16.mp4","p16.jpg"],
+  ["g06.mp4","p08.jpg","g08.mp4","n05.mp4","g17.mp4","p15.jpg","n06.mp4","n19.mp4","p17.jpg"],
+  ["g07.mp4","n07.mp4","g20.mp4","n08.mp4","n12.mp4","n13.mp4","n18.mp4","n20.mp4","n17.mp4"],
+];
+const currentRows = () =>
+  document.documentElement.dataset.theme === "dark" ? ROWS_DARK : ROWS_LIGHT;
+const ROWS = window.ROWS || currentRows();
 const DURATIONS = [75, 105, 90, 120]; // как в WarpPage: 75/105/90 (+1)
 const SLOW_FACTOR = 0.1728; // 0.12 из gal/glass-rows.jsx, +20% +20%
 const SCROLL_EASE = 4.5;    // 9 из gal/glass-rows.jsx /2 — вдвое плавнее
@@ -1089,6 +1099,17 @@ function startGlGallery() {
   };
 
   galleryRepaint = () => {
+    /* смена темы → другой набор рядов (light/dark контент) */
+    const next = window.ROWS || currentRows();
+    let swapped = false;
+    rows.forEach((r, i) => {
+      const srcs = next[i] || [];
+      if (r.srcs !== srcs) {
+        r.srcs = srcs;
+        if (buildRow(r, i)) swapped = true;
+      }
+    });
+    if (swapped) layout();
     lineColorCache = null;
     for (const r of rows) {
       r.lastT.fill(-1);
@@ -1130,7 +1151,7 @@ function startDomGallery() {
     bgEl.appendChild(row);
     const period = 1; // в долях: offset хранится как доля period строки
     const speed = 2 / (DURATIONS[i] ?? 90) * SLOW_FACTOR;
-    tracks.push({ el: track, offset: i * 0.35, target: i * 0.35, speed, period });
+    tracks.push({ el: track, offset: i * 0.35, target: i * 0.35, speed, period, srcs });
   });
 
   function measureTracks() {
@@ -1156,6 +1177,19 @@ function startDomGallery() {
     requestAnimationFrame(galleryTick);
   }
   requestAnimationFrame(galleryTick);
+
+  galleryRepaint = () => {
+    /* смена темы → другой набор рядов */
+    const next = window.ROWS || currentRows();
+    tracks.forEach((t, i) => {
+      const srcs = next[i] || [];
+      if (t.srcs === srcs) return;
+      t.srcs = srcs;
+      t.el.innerHTML = "";
+      [...srcs, ...srcs].forEach((s) => t.el.appendChild(card(s)));
+    });
+    measureTracks();
+  };
 }
 
 if (!startGlGallery()) startDomGallery();
