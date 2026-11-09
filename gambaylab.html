@@ -149,6 +149,22 @@ body {
   transform: translate(-50%, -50%);
   object-fit: cover; display: block;
 }
+.media-controls {
+  position: absolute; left: 50%; bottom: 14px;
+  transform: translateX(-50%);
+  display: flex; gap: 10px; z-index: 6;
+}
+.mc-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.35);
+  background: rgba(10,10,12,.5);
+  color: #fff; cursor: pointer; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  transition: background .2s ease, transform .2s ease;
+}
+.mc-btn:hover { background: rgba(10,10,12,.75); transform: scale(1.06); }
+.mc-btn svg { width: 17px; height: 17px; fill: currentColor; display: block; }
 .media .shade {
   position: absolute; inset: 0;
   background: #000; opacity: 0; /* вернуть с видео: 0.5 - progress * 0.3 */
@@ -345,7 +361,13 @@ body, .ticker, .wave a { transition: background-color .45s ease, color .45s ease
 
           <div class="media-wrap" id="media">
             <div class="media">
-              <div class="slot"><img src="media/foto.png" alt=""></div>
+              <div class="slot">
+                <video src="media/hero.mp4" autoplay muted loop playsinline></video>
+                <div class="media-controls">
+                  <button class="mc-btn" id="mcPlay" type="button" aria-label="Пауза"></button>
+                  <button class="mc-btn" id="mcMute" type="button" aria-label="Включить звук"></button>
+                </div>
+              </div>
               <div class="shade" id="shade"></div>
             </div>
           </div>
@@ -1224,6 +1246,33 @@ if (heroEl) {
   sizeHero();
 }
 
+/* ---- кнопки play/mute на центральном видео ---- */
+const ICONS = {
+  play: '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',
+  pause: '<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>',
+  sound: '<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 5V4L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>',
+  mute: '<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 5V4L8 9H4zm15.5-.5L18 7.1l-2 2-2-2-1.4 1.4 2 2-2 2L14 14l2-2 2 2 1.4-1.4-2-2 2-2z"/></svg>'
+};
+function initMediaControls() {
+  const v = document.querySelector("#media video");
+  const pb = document.getElementById("mcPlay");
+  const mb = document.getElementById("mcMute");
+  if (!v || !pb || !mb) return;
+  const sync = () => {
+    pb.innerHTML = v.paused ? ICONS.play : ICONS.pause;
+    pb.setAttribute("aria-label", v.paused ? "Воспроизвести" : "Пауза");
+    mb.innerHTML = v.muted ? ICONS.mute : ICONS.sound;
+    mb.setAttribute("aria-label", v.muted ? "Включить звук" : "Выключить звук");
+  };
+  pb.addEventListener("click", () => { v.paused ? v.play().catch(() => {}) : v.pause(); sync(); });
+  mb.addEventListener("click", () => { v.muted = !v.muted; sync(); });
+  v.addEventListener("play", sync);
+  v.addEventListener("pause", sync);
+  v.addEventListener("volumechange", sync);
+  sync();
+}
+initMediaControls();
+
 function render() {
   const isMobile = window.innerWidth < 768;
   const w = 300 + progress * (isMobile ? 650 : 1250);
@@ -1238,7 +1287,7 @@ function render() {
   }
 
   shade.style.opacity = 0;
-  bg.style.opacity = 1 - progress;
+  bg.style.opacity = (1 - progress) * 0.8;
   gallerySetVisible(progress < 1);
   content.style.opacity = expanded ? 1 : 0;
 }
