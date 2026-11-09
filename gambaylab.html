@@ -143,7 +143,8 @@ body {
 }
 .media { width: 100%; height: 100%; border-radius: 16px; overflow: hidden; box-shadow: var(--media-shadow); }
 .media .slot { position: relative; width: 100%; height: 100%; background: var(--bg); }
-.media .slot video {
+.media .slot video,
+.media .slot img {
   position: absolute; left: 50%; top: 50%;
   transform: translate(-50%, -50%);
   object-fit: cover; display: block;
@@ -344,7 +345,7 @@ body, .ticker, .wave a { transition: background-color .45s ease, color .45s ease
 
           <div class="media-wrap" id="media">
             <div class="media">
-              <div class="slot"><video src="media/hero.mp4" autoplay muted loop playsinline></video></div>
+              <div class="slot"><img src="media/foto.png" alt=""></div>
               <div class="shade" id="shade"></div>
             </div>
           </div>
@@ -1205,20 +1206,20 @@ const bg = document.getElementById("bg");
 const titles = document.getElementById("titles");
 const content = document.getElementById("content");
 
-const heroVid = document.querySelector("#media video");
+const heroEl = document.querySelector("#media video, #media img");
 function sizeHero() {
-  if (!heroVid) return;
+  if (!heroEl) return;
   const isMobile = window.innerWidth < 768;
   const fw = Math.min(300 + (isMobile ? 650 : 1250), window.innerWidth * 0.95);
   const fh = Math.min(400 + (isMobile ? 200 : 400), window.innerHeight * 0.85);
-  const ar = (heroVid.videoWidth || 16) / (heroVid.videoHeight || 9);
+  const ar = (heroEl.naturalWidth || heroEl.videoWidth || 16) / (heroEl.naturalHeight || heroEl.videoHeight || 9);
   let w = fw, h = fw / ar;
   if (h < fh) { h = fh; w = fh * ar; }
-  heroVid.style.width = Math.ceil(w) + "px";
-  heroVid.style.height = Math.ceil(h) + "px"; // с запасом >= финального размера — фон не просвечивает
+  heroEl.style.width = Math.ceil(w) + "px";
+  heroEl.style.height = Math.ceil(h) + "px"; // с запасом >= финального размера — фон не просвечивает
 }
-if (heroVid) {
-  heroVid.addEventListener("loadedmetadata", sizeHero);
+if (heroEl) {
+  heroEl.addEventListener(heroEl.tagName === "IMG" ? "load" : "loadedmetadata", sizeHero);
   window.addEventListener("resize", sizeHero);
   sizeHero();
 }
