@@ -1666,6 +1666,21 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     draw(0);
     pl.style.background = "transparent"; // canvas уже рисует сплошное белое — без мерцания
     const dur = 2000, t0 = performance.now();
+    /* звук центрального видео: снимаем mute при громкости 0 и поднимаем
+       0 → 100% ровно за время dissolve-анимации проявления (2с) */
+    const hv = document.querySelector("#media video");
+    if (hv) {
+      hv.muted = false;
+      hv.volume = 0;
+      hv.play().catch(() => { hv.muted = true; }); // если политика браузера запретила — остаёмся mute, кнопка есть
+      const r0 = performance.now();
+      const rv = now => {
+        const p = Math.min(1, (now - r0) / dur);
+        hv.volume = easeInOut(p);
+        if (p < 1) requestAnimationFrame(rv);
+      };
+      requestAnimationFrame(rv);
+    }
     const tick = now => {
       const p = Math.min(1, (now - t0) / dur);
       draw(easeInOut(p));
