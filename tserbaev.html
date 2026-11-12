@@ -335,7 +335,7 @@ body {
 .theme-toggle:hover { transform: scale(1.1); }
 body, .ticker, .wave a { transition: background-color .45s ease, color .45s ease, border-color .45s ease; }
 </style>
-<script>try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="dark"?"dark":"light";}catch(e){document.documentElement.dataset.theme="light";}</script>
+<script>document.documentElement.dataset.theme="light";try{localStorage.removeItem("theme");}catch(e){}</script>
 </head>
 <body data-base="">
 <div class="preloader" id="preloader" aria-hidden="true">
