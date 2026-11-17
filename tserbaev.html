@@ -336,7 +336,7 @@ body {
           <div class="media-wrap" id="media">
             <div class="media">
               <div class="slot">
-                <video src="media/iweb-hd.mp4" autoplay muted loop playsinline preload="auto"></video>
+                <video src="media/iweb-hd.mp4" poster="media/iweb-poster.jpg" autoplay muted loop playsinline preload="auto"></video>
                 <div class="media-controls">
                   <button class="icon-btn mc-btn" id="mcPlay" type="button" aria-label="Пауза"></button>
                   <button class="icon-btn mc-btn" id="mcMute" type="button" aria-label="Включить звук"></button>
@@ -1294,8 +1294,10 @@ function initMediaControls() {
 }
 initMediaControls();
 
-/* герой-видео: петля + звук — muted-старт, повторные попытки снять mute (Chrome гасит
-   ранний размут), первый жест пользователя всегда включает звук */
+/* герой-видео: петля + звук — стартуем со звуком сразу, как только видео готово;
+   если браузер запретил autoplay со звуком — играет без звука, и первый жест
+   пользователя мгновенно включает звук (без отложенных попыток и без плавного
+   нарастания — либо тишина, либо звук на полной громкости) */
 (function () {
   const v = document.querySelector("#media video");
   if (!v) return;
@@ -1306,37 +1308,30 @@ initMediaControls();
   if (pb) pb.addEventListener("click", () => { userPaused = v.paused; });
   const mb = document.getElementById("mcMute");
   if (mb) mb.addEventListener("click", () => { userMuted = v.muted; });
-  const playMuted = () => { v.muted = true; v.play().catch(() => {}); };
-  /* первый жест: включает звук, если его нет или видео встало (не мешает паузе/ mute от пользователя) */
-  const unlock = () => {
-    if (userPaused || userMuted || (!v.muted && !v.paused)) return;
+  const soundOn = () => {
+    if (userPaused || userMuted) return;
     v.muted = false;
     v.volume = 1;
+  };
+  /* первый жест: немедленно включаем звук и воспроизведение */
+  const unlock = () => {
+    if (userPaused || userMuted) return;
+    soundOn();
     v.play().catch(() => {});
   };
   addEventListener("pointerdown", unlock);
   addEventListener("keydown", unlock);
   const start = () => {
-    v.muted = true;
-    v.play().catch(() => {});
-    /* размут без жеста: пробуем снять mute раз в 3с, максимум 5 раз;
-       если Chrome поставил паузу — следующий тик вернёт воспроизведение без звука */
-    let attempts = 0;
-    let last = performance.now() - 2600;
+    /* пробуем со звуком; запрет autoplay — fallback на muted-воспроизведение */
+    v.muted = false;
+    v.volume = 1;
+    v.play().catch(() => {
+      v.muted = true;
+      v.play().catch(() => {});
+    });
+    /* сторож: если вкладка поставила паузу — возвращаем воспроизведение */
     setInterval(() => {
-      if (userPaused) return;
-      if (v.paused) {
-        if (v.muted) playMuted();
-        else v.play().catch(() => playMuted());
-        return;
-      }
-      const now = performance.now();
-      if (!userMuted && v.muted && attempts < 5 && now - last > 3000) {
-        attempts++;
-        last = now;
-        v.muted = false;
-        v.volume = 1;
-      }
+      if (!userPaused && v.paused) v.play().catch(() => {});
     }, 1000);
   };
   if (v.readyState >= 3) start();
@@ -1746,7 +1741,19 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
   if (REDUCED) { pl.remove(); unlock(); return; }
 
   const hv = document.querySelector("#media video");
-  const ready = () => (!hv || hv.readyState >= 3) && (!document.fonts || document.fonts.status === "loaded");
+  /* прелоадер ждёт не просто readyState, а реально показанный первый кадр —
+     иначе галерея открывается раньше, чем видео отрисовалось (чёрный экран) */
+  let framePainted = false;
+  if (hv) {
+    if (hv.requestVideoFrameCallback) hv.requestVideoFrameCallback(() => { framePainted = true; });
+    hv.addEventListener("loadeddata", () => {
+      if (hv.currentTime > 0 || hv.readyState >= 4) framePainted = true;
+    }, { once: true });
+    hv.addEventListener("canplay", () => {
+      if (hv.currentTime > 0) framePainted = true;
+    }, { once: true });
+  }
+  const ready = () => (!hv || framePainted || hv.readyState >= 4) && (!document.fonts || document.fonts.status === "loaded");
 
   let W = 0, H = 0, DPR = 1;
   const fit = () => {
