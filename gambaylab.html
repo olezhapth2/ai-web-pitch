@@ -311,7 +311,7 @@ body {
   .hint { display: none; }
 }
 </style>
-<script>try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark";}catch(e){document.documentElement.dataset.theme="dark";}</script>
+<script>document.documentElement.dataset.theme="dark";</script>
 </head>
 <body data-base="">
 <div class="preloader" id="preloader" aria-hidden="true">
@@ -1312,8 +1312,11 @@ initMediaControls();
     v.muted = false;
     v.volume = 1;
   };
-  /* первый жест: немедленно включаем звук и воспроизведение */
-  const unlock = () => {
+  /* первый жест: немедленно включаем звук и воспроизведение;
+     жест на самих кнопках play/mute не перехватываем — иначе unlock
+     разворачивает звук раньше клика и кнопка всегда получается инвертированной */
+  const unlock = (e) => {
+    if (e && e.target && e.target.closest && e.target.closest(".media-controls")) return;
     if (userPaused || userMuted) return;
     soundOn();
     v.play().catch(() => {});
@@ -1321,12 +1324,17 @@ initMediaControls();
   addEventListener("pointerdown", unlock);
   addEventListener("keydown", unlock);
   const start = () => {
-    /* пробуем со звуком; запрет autoplay — fallback на muted-воспроизведение */
+    /* пробуем со звуком; запрет autoplay — стартуем без звука и сразу снимаем mute:
+       ограничение браузера относится к play(), а не к смене muted */
     v.muted = false;
     v.volume = 1;
     v.play().catch(() => {
       v.muted = true;
-      v.play().catch(() => {});
+      v.play().then(() => {
+        if (userPaused || userMuted) return;
+        v.muted = false;
+        v.volume = 1;
+      }).catch(() => {});
     });
     /* сторож: если вкладка поставила паузу — возвращаем воспроизведение */
     setInterval(() => {
