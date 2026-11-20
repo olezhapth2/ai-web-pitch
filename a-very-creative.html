@@ -1760,7 +1760,13 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
       if (hv.currentTime > 0) framePainted = true;
     }, { once: true });
   }
-  const ready = () => (!hv || framePainted || hv.readyState >= 4) && (!document.fonts || document.fonts.status === "loaded");
+  const ready = () => {
+    if (!document.fonts || document.fonts.status !== "loaded") return false;
+    if (!hv) return true;
+    /* достаточно не первого кадра, а запаса буфера — иначе видео стартует и замирает */
+    const buf = hv.buffered.length ? hv.buffered.end(hv.buffered.length - 1) - hv.currentTime : 0;
+    return framePainted && hv.readyState >= 3 && !hv.paused && hv.currentTime > 0 && buf > 1.5;
+  };
 
   let W = 0, H = 0, DPR = 1;
   const fit = () => {
@@ -1918,6 +1924,15 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
   const BG_FADE_START = LAST_HOLE + 80;
   const BG_FADE_OUT = 900;
 
+  /* Пока центральное видео не готово, прелоадер не гаснет: дырки и фейд стоят
+     на состоянии до первой дырки (экран остаётся тёмным), а неон по контурам
+     крутится по кругу. Как только видео готово — ускоренное раскрытие. */
+  const HOLD = rects.length ? Math.min(...rects.map((r) => r.hole0)) - 40 : B_START;
+  const WAIT_CAP = 15000;
+  let waiting = true;
+  let pt = 0;
+  let lastWall = 0;
+
   /* первый кадр — синхронно, до paint: канва рисует темноту, фон div убираем без вспышки */
   fit();
   ctx.fillStyle = "#0a0a0c";
@@ -1926,7 +1941,16 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
 
   const t0 = performance.now();
   const frame = (now) => {
-    const t = now - t0;
+    const wall = now - t0;
+    if (waiting && (ready() || wall > WAIT_CAP)) waiting = false;
+    /* t — фазовые часы (дырки и фейд): во время ожидания стоят на состоянии до
+       первой дырки, потом идут в обычном темпе. Каркас во время ожидания
+       крутит каждый контур по кругу — экран остаётся живым, а не чёрным */
+    const dt = Math.min(64, Math.max(0, wall - lastWall));
+    lastWall = wall;
+    if (waiting) pt = Math.min(pt + dt, HOLD);
+    else pt += dt;
+    const t = pt;
     syncRects();
     clearSpec();
     const fadeRaw = Math.min(1, Math.max(0, (t - BG_FADE_START) / BG_FADE_OUT));
@@ -1952,7 +1976,9 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
 
     /* каркас: блик обходит контур и мягко гаснет после полного круга */
     for (const r of rects) {
-      const local = t - B_START - r.delay;
+      const raw = (waiting ? wall : t) - B_START - r.delay;
+      if (raw < 0) continue;
+      const local = waiting ? raw % (r.dur + r.lag + 600) : raw;
       if (local <= 0) continue;
       const p = Math.min(1, local / r.dur);
       const appear = ease(Math.min(1, local / (r.dur * 0.35)));
@@ -1961,7 +1987,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
       if (!runSpec(r, p, intensity)) runFallback(r, p, intensity);
     }
 
-    if (fadeRaw >= 1 && (ready() || t > 8000)) { pl.remove(); unlock(); return; }
+    if (fadeRaw >= 1 && !waiting) { pl.remove(); unlock(); return; }
     requestAnimationFrame(frame);
   };
   requestAnimationFrame(frame);
