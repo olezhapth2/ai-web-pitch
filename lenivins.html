@@ -1312,42 +1312,56 @@ initMediaControls();
     v.muted = false;
     v.volume = 1;
   };
+  /* браузер запретил звук без жеста — автоматически больше не пробуем, только по клику */
+  let soundBlocked = false;
   /* первый жест: немедленно включаем звук и воспроизведение;
      жест на самих кнопках play/mute не перехватываем — иначе unlock
      разворачивает звук раньше клика и кнопка всегда получается инвертированной */
   const unlock = (e) => {
     if (e && e.target && e.target.closest && e.target.closest(".media-controls")) return;
     if (userPaused || userMuted) return;
+    soundBlocked = false;
     soundOn();
     v.play().catch(() => {});
   };
   addEventListener("pointerdown", unlock);
   addEventListener("keydown", unlock);
+  /* воспроизведение важнее звука: если со звуком не пускают — играем без звука */
+  const ensurePlay = () => {
+    if (userPaused || !v.paused) return;
+    v.play().catch(() => {
+      if (userMuted) return;
+      v.muted = true;
+      soundBlocked = true;
+      v.play().catch(() => {});
+    });
+  };
+  /* пробуем снять mute; если браузер в ответ ставит паузу — откатываем звук
+     и возобновляем игру, чтобы видео никогда не зависло на паузе */
+  const tryUnmute = () => {
+    if (userPaused || userMuted || soundBlocked || !v.muted) return;
+    v.muted = false;
+    v.volume = 1;
+    const check = () => {
+      if (userPaused || !v.paused) return;
+      v.muted = true;
+      soundBlocked = true;
+      v.play().catch(() => {});
+    };
+    const p = v.play();
+    if (p && p.then) p.then(() => setTimeout(check, 400)).catch(check);
+    else setTimeout(check, 400);
+  };
   const start = () => {
-    /* пробуем со звуком; запрет autoplay — стартуем без звука и сразу снимаем mute:
-       ограничение браузера относится к play(), а не к смене muted */
+    /* пробуем со звуком; запрет autoplay — стартуем без звука, звук попробует сторож */
     v.muted = false;
     v.volume = 1;
     v.play().catch(() => {
       v.muted = true;
-      v.play().then(() => {
-        if (userPaused || userMuted) return;
-        v.muted = false;
-        v.volume = 1;
-      }).catch(() => {});
+      v.play().catch(() => {});
     });
-    /* сторож: если вкладка поставила паузу — возвращаем воспроизведение;
-       Safari и др. запрещают старт со звуком — снимаем mute сами, как только разрешают */
-    let unmuteTry = 0;
-    setInterval(() => {
-      if (userPaused || userMuted) return;
-      if (v.paused) v.play().catch(() => {});
-      if (!v.muted) return;
-      if (++unmuteTry > 30) return;
-      v.muted = false;
-      v.volume = 1;
-      v.play().catch(() => { v.muted = true; });
-    }, 1000);
+    /* сторож: возвращаем воспроизведение и снимаем mute, когда браузер разрешает */
+    setInterval(() => { ensurePlay(); tryUnmute(); }, 1000);
   };
   if (v.readyState >= 3) start();
   else v.addEventListener("canplay", start, { once: true });
@@ -1917,12 +1931,19 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
 
   const rects = buildRects();
   const rectById = new Map(rects.map((r) => [r.id, r]));
-  const syncRects = () => {
+  /* геометрия не меняется, пока скролл заблокирован — гоняем reflow не каждый кадр,
+     а раз в 500мс (и сразу при первом кадре): getBoundingClientRect на каждой карточке
+     каждый кадр даёт рывки на первой загрузке */
+  let lastSync = -1e9;
+  const syncRects = (now) => {
+    if (now - lastSync < 500) return;
+    lastSync = now;
     for (const live of galleryRects()) {
       const r = rectById.get(live.id);
       if (r) Object.assign(r, live);
     }
   };
+  addEventListener("resize", () => { lastSync = -1e9; });
   let LAST_HOLE = 0;
   for (const r of rects) {
     LAST_HOLE = Math.max(LAST_HOLE, r.hole1);
@@ -1962,7 +1983,7 @@ document.getElementById("themeToggle")?.addEventListener("click", () => {
     else pt += dt * REVEAL_SPEED;
     if (wall > HARD_CAP) pt = Math.max(pt, BG_FADE_START + BG_FADE_OUT);
     const t = pt;
-    syncRects();
+    syncRects(now);
     clearSpec();
     const fadeRaw = Math.min(1, Math.max(0, (t - BG_FADE_START) / BG_FADE_OUT));
     cv.style.opacity = String(1 - ease(fadeRaw));
